@@ -1,0 +1,79 @@
+{
+  "name": "bsocial-planaria",
+  "version": "1.0.0",
+  "description": "Bitcoin Social indexer to MongoDB",
+  "author": "icellan (https://github.com/icellan)",
+  "license": "Open BSV License",
+  "homepage": "https://github.com/icellan/bsocial-planaria",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/icellan/bsocial-planaria.git"
+  },
+  "scripts": {
+    "clean": "rimraf dist/",
+    "build": "rimraf dist/ && babel src/ --presets minify --out-dir dist/",
+    "lint": "eslint ./src",
+    "lintfix": "eslint ./src --fix",
+    "testquiet": "./node_modules/.bin/jest --forceExit --detectOpenHandles --silent",
+    "testonly": "./node_modules/.bin/jest --collectCoverage --forceExit --detectOpenHandles",
+    "testwatch": "./node_modules/.bin/jest --watchAll --collectCoverage --detectOpenHandles",
+    "test": "npm run lint && npm run testquiet",
+    "test-watch": "npm run testwatch",
+    "check": "./node_modules/.bin/npm-check -u",
+    "prepare": "npm run clean && npm run lint && npm run test && npm run build",
+    "pub": "./node_modules/.bin/np || true",
+    "run": "npm run build && node ./dist/index.js",
+    "start": "node ./dist/index.js"
+  },
+  "main": "dist/bsocial.js",
+  "keywords": [
+    "social",
+    "bitcoin",
+    "bsv",
+    "bitbus"
+  ],
+  "dependencies": {
+    "bmapjs": "^0.3.2",
+    "bsv": "^1.5.3",
+    "event-stream": "^4.0.1",
+    "eventsource": "^1.0.7",
+    "mongodb": "^3.6.2",
+    "node-fetch": "^2.6.1",
+    "reconnecting-eventsource": "^1.1.0",
+    "simpl-schema": "^1.10.2",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.12.10",
+    "@shelf/jest-mongodb": "^1.2.3",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.6.3",
+    "babel-preset-minify": "^0.4.3",
+    "eslint": "^7.16.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
+    "np": "2.20.1",
+    "npm-check": "5.7.0",
+    "pre-commit": "^1.2.2",
+    "regenerator-runtime": "^0.12.1",
+    "rimraf": "2.6.2",
+    "run-sequence": "2.2.1"
+  },
+  "bin": {
+    "bsocial-planaria": "./dist/index.js"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(mjs|jsx|js)$": "babel-jest"
+    },
+    "preset": "@shelf/jest-mongodb"
+  }
+}

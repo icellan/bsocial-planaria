@@ -1,0 +1,5 @@
+{
+  "token": "",
+  "mongoUrl": "mongodb://localhost:27017/bsocial-planaria",
+  "bapApiUrl": "http://localhost:3000/v1"
+}
