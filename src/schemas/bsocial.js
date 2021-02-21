@@ -25,6 +25,25 @@ const BObject = new SimpleSchema({
   },
 });
 
+const BPPObject = new SimpleSchema({
+  action: {
+    type: String,
+    optional: false,
+  },
+  currency: {
+    type: String,
+    optional: false,
+  },
+  address: {
+    type: String,
+    optional: false,
+  },
+  apiEndpoint: {
+    type: String,
+    optional: true,
+  },
+});
+
 const AIPObject = new SimpleSchema({
   algorithm: {
     type: String,
@@ -68,12 +87,14 @@ export const BSOCIAL = new Collection('bsocial', new SimpleSchema({
   },
   B: {
     type: Array,
+    optional: true,
   },
   'B.$': {
     type: BObject,
   },
   MAP: {
     type: Array,
+    optional: false,
   },
   'MAP.$': {
     type: Object,
@@ -81,21 +102,41 @@ export const BSOCIAL = new Collection('bsocial', new SimpleSchema({
   },
   AIP: {
     type: Array,
+    optional: true,
   },
   'AIP.$': {
     type: AIPObject,
   },
+  BPP: {
+    type: Array,
+    optional: true,
+  },
+  'BPP.$': {
+    type: BPPObject,
+  },
   likes: {
-    type: Number,
+    type: SimpleSchema.Integer,
+    optional: true,
   },
   reposts: {
-    type: Number,
+    type: SimpleSchema.Integer,
+    optional: true,
   },
   comments: {
-    type: Number,
+    type: SimpleSchema.Integer,
+    optional: true,
+  },
+  tips: {
+    type: SimpleSchema.Integer,
+    optional: true,
+  },
+  payments: {
+    type: SimpleSchema.Integer,
+    optional: true,
   },
   processed: {
     type: Boolean,
+    optional: true,
   },
 }));
 

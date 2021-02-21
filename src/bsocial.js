@@ -1,6 +1,7 @@
-import fetch from 'node-fetch';
 import es from 'event-stream';
 import BMAP from 'bmapjs';
+import 'node-fetch';
+import { bmapQuerySchemaHandler } from 'bmapjs/dist/utils';
 import {
   DEBUG,
   MAP_BITCOM_ADDRESS,
@@ -11,6 +12,7 @@ import { BSOCIAL } from './schemas/bsocial';
 import { Errors } from './schemas/errors';
 import { getBitbusBlockEvents } from './get';
 import { getStatusValue, updateStatusValue } from './status';
+import { cleanDocumentKeys } from './lib/utils';
 
 export const FIRST_BSOCIAL_BLOCK = 671145;
 
@@ -54,7 +56,7 @@ export const getBitsocketQuery = function (lastBlockIndexed = false, queryFind =
           $elemMatch: {
             i: 5,
             s: {
-              $in: ['post', 'like', 'follow', 'unfollow', 'attachment', 'tip'],
+              $in: ['post', 'like', 'follow', 'unfollow', 'attachment', 'tip', 'payment'],
             },
           },
         },
@@ -108,6 +110,7 @@ export const addErrorTransaction = async function (op) {
 
 const getBAPIdByAddress = async function (address, block, timestamp) {
   // use BAP API
+  // TODO: allow to set a mongoUrl and use a local instance, using the BAP class
   if (bapApiUrl) {
     // fetch ...
     const result = await fetch(`${bapApiUrl}/identity/validByAddress`, {
@@ -139,11 +142,28 @@ export const processBSocialTransaction = async function (transaction) {
   query.processed = false;
 
   // get BAP IDs for given social op
-  for (let i = 0; i < query.AIP.length; i++) {
-    const { address } = query.AIP[i];
-    const bap = await getBAPIdByAddress(address, transaction.block, transaction.timestamp);
-    if (bap && bap.valid === true) {
-      query.AIP[i].bapId = bap.idKey;
+  if (query.AIP) {
+    for (let i = 0; i < query.AIP.length; i++) {
+      const { address } = query.AIP[i];
+      const bap = await getBAPIdByAddress(address, transaction.block, transaction.timestamp);
+      if (bap && bap.valid === true) {
+        query.AIP[i].bapId = bap.idKey;
+      }
+    }
+  }
+
+  // check for binary / encrypted B data
+  if (query.B) {
+    for (let i = 0; i < query.B.length; i++) {
+      try {
+        if (query.B[i]['content-type'].match(/ecies$/)) {
+          // store the encrypted stuff as hex - binary does not survive storing to Mongo
+          // the bmap parser does not understand this yet, maybe it should be added there
+          query.B[i].content = Buffer.from(query.B[i].content, 'binary').toString('hex');
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
@@ -152,6 +172,11 @@ export const processBSocialTransaction = async function (transaction) {
     // update
     const bSocialId = query._id;
     delete query._id;
+    if (existing.timestamp) {
+      // do not update timestamp if already set, we'll use the original one from the mempool
+      delete query.timestamp;
+    }
+
     await BSOCIAL.updateOne({
       _id: bSocialId,
     }, {
@@ -176,7 +201,23 @@ export const processBSocialTransaction = async function (transaction) {
 export const parseBSocialTransaction = async function (op) {
   try {
     const bmap = new BMAP();
-    const bSocialOp = await bmap.transformTx(op);
+
+    // add the BPP handler
+    const querySchema = [
+      { action: 'string' },
+      { currency: 'string' },
+      { address: 'string' },
+      { apiEndpoint: 'string' },
+    ];
+    const handler = bmapQuerySchemaHandler.bind(bmap, 'BPP', querySchema);
+    bmap.addProtocolHandler({
+      name: 'BPP',
+      address: 'BPP',
+      querySchema,
+      handler,
+    });
+
+    const bSocialOp = cleanDocumentKeys(await bmap.transformTx(op));
     bSocialOp.txId = bSocialOp.tx.h;
 
     delete bSocialOp.in;
@@ -185,9 +226,9 @@ export const parseBSocialTransaction = async function (op) {
     delete bSocialOp.lock;
     delete bSocialOp.blk;
 
-    const keysToTransform = ['B', 'AIP', 'MAP'];
+    const keysToTransform = ['B', 'AIP', 'MAP', 'BPP'];
     keysToTransform.forEach((key) => {
-      if (!Array.isArray(bSocialOp[key])) {
+      if (bSocialOp[key] && !Array.isArray(bSocialOp[key])) {
         bSocialOp[key] = [bSocialOp[key]];
       }
     });

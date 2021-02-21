@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import 'node-fetch';
 import { TOKEN } from './config';
 
 export const getBitbusBlockEvents = async function (query, parser = 'bob') {

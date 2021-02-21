@@ -1,0 +1,306 @@
+[
+  {
+    "_id": "6019a6952f209a57c8c9f772",
+    "tx": {
+      "h": "a78e5172303e629d0197b68daa2bce03ac1a5c111054d40b738cc19cc24702c0"
+    },
+    "in": [
+      {
+        "i": 0,
+        "seq": 4294967295,
+        "tape": [
+          {
+            "cell": [
+              {
+                "s": "0D\u0002 8*E���(8\u0002O\u0007��آ ��?��;�\u0017�J�[w�6\u0002 \u001f?��q3�\u000f��T�k']�����s�7�!\u00047]\u0003g�8A",
+                "h": "30440220382a45ec8cf59f2838024f07f6d5d8a220bce83fcac53bf317fc4aea5b77f13602201f3fb6997133d10fa5b254e06b275d8bc0a1f8b673a237f92104375d03679c3841",
+                "b": "MEQCIDgqReyM9Z8oOAJPB/bV2KIgvOg/ysU78xf8Supbd/E2AiAfP7aZcTPRD6WyVOBrJ12LwKH4tnOiN/khBDddA2ecOEE=",
+                "i": 0,
+                "ii": 0
+              },
+              {
+                "s": "\u0002I(��XM�}c>�y5�\u0012ݍ��{p�\u0018�v\u0005\u0017?\n~",
+                "h": "02492888d2584dd87d633eee807935d212dd8de8b2c07b70fc18d87605173f0a7e",
+                "b": "AkkoiNJYTdh9Yz7ugHk10hLdjeiywHtw/BjYdgUXPwp+",
+                "i": 1,
+                "ii": 1
+              }
+            ],
+            "i": 0
+          }
+        ],
+        "e": {
+          "h": "098887cb0a887a64c3532b2f5494979baef1ebc9e9759095306cfc1bc76c1484",
+          "i": 2,
+          "a": "13Jc8G17BdN7nQr6JUtcoy55S7wzYk2aBf"
+        }
+      }
+    ],
+    "out": [
+      {
+        "i": 0,
+        "tape": [
+          {
+            "cell": [
+              {
+                "op": 0,
+                "ops": "OP_0",
+                "i": 0,
+                "ii": 0
+              },
+              {
+                "op": 106,
+                "ops": "OP_RETURN",
+                "i": 1,
+                "ii": 1
+              }
+            ],
+            "i": 0
+          },
+          {
+            "cell": [
+              {
+                "s": "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut",
+                "h": "31394878696756345179427633744870515663554551797131707a5a56646f417574",
+                "b": "MTlIeGlnVjRReUJ2M3RIcFFWY1VFUXlxMXB6WlZkb0F1dA==",
+                "i": 0,
+                "ii": 2
+              },
+              {
+                "s": "This is a test paywall transaction.\n\n",
+                "h": "54686973206973206120746573742070617977616c6c207472616e73616374696f6e2e0a0a",
+                "b": "VGhpcyBpcyBhIHRlc3QgcGF5d2FsbCB0cmFuc2FjdGlvbi4KCg==",
+                "i": 1,
+                "ii": 3
+              },
+              {
+                "s": "text/markdown",
+                "h": "746578742f6d61726b646f776e",
+                "b": "dGV4dC9tYXJrZG93bg==",
+                "i": 2,
+                "ii": 4
+              },
+              {
+                "s": "UTF-8",
+                "h": "5554462d38",
+                "b": "VVRGLTg=",
+                "i": 3,
+                "ii": 5
+              }
+            ],
+            "i": 1
+          },
+          {
+            "cell": [
+              {
+                "s": "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut",
+                "h": "31394878696756345179427633744870515663554551797131707a5a56646f417574",
+                "b": "MTlIeGlnVjRReUJ2M3RIcFFWY1VFUXlxMXB6WlZkb0F1dA==",
+                "i": 0,
+                "ii": 7
+              },
+              {
+                "s": "BIE1\u0003�;�\r�uX\u000b�x\\o��LXK��\u001e�ì˵-D\\@2g����1u�\u001c\u0004ĳ��h���,h�So�^��:W���\u00049Dg��\u001e\u0007D�V�M˺4:�ۅN�mt�d�&\u0017#������^\u0013�8���s�#�\u0012מ\n,|k\\3�5+DBњ�]��H��}Ʈ�\u0013\u001aR��\u0004YϬh�\u001bkbi����0����\u0007\u0007}7�\r�r�ٮ\u0006��4��ú\u0003\u0003�Y�5(�̉�MD��Lt�gp^��]���\u0005\u001d���\u0013�W��\bK�\u0016e�d7��7\u0018\u0016\u0013V\u0012%�\u0018\u0007C7��w\u0006q�%��qh��Q�C��:�1a\u0003�m�5�iBW����ו7�o�gd��Lk\u0019��Zʂkm\u000b瑷�\u001d�<�\u0015\u0003\u0010�u�/<\u001f�z^��٘��\u001d\u001d_D΁mF_\t:�̘�4Ɠ�^��6Q�;Sm�J��\u0012�\u001d�\u0006>�b�ǈy\u000ez&,lH�\bj��\u0000M�R�b�?��\rn�s\u0001_\"Z��d�O\u001fC�\u0018cԄN\u0019�3\u001a_�~5\f�����B���C�$��e�Α(����\u0019",
+                "h": "4249453103ac3bcc0d8975580b81785c6fd27fdc4c584bcbc81ebac3accbb52d445c40326798f7a9e231758e1c04c4b3f9d86892f9c52c68e4536f965ec9ff3a57bae08e04394467b9f18cb01e07449456da4dcbba343affdb854e956d74fb64b826172390ba99b5bcbe5e13d438a982ac73c823ef12d79e0a2c7c6b5c33ae352b4442d19ae75daea04887ad7dc6aee3131a529fd70459cfac68f11b6b62698cc183db30e9f5b0b007077d37f90db272ed8cd9ae06fae33480dac3ba0303d159f435288ccc89cf4d448a914c74dd67705effce5db8fde5bb051db5f4d013f2b6579cad084be616658f6437a5bd37181613561225c318074337e1e4770671c425fce37168bdf0519343d1f43a94316103e36de93599694257ad8982c0d79537d16fc36764a4e34c6b1986ad5aca826b6d0be791b7c71dd83ce51503109a759b2f3c1fb77a5ee1ead998b8941d1d5f44ce816d465f093acdcc98b934c693cd5eb4913651973b536db54a9ec312b41dd7063ef862fec788790e7a262c6c48af086ab3c4004df652e262cc3fa7920d6ee073015f225aace764854f1f43df1863d4844e19d8331a5ff97e350c97967f978aa042a3bdc943bb249dca65e2a9ce91288388f39ad319",
+                "b": "QklFMQOsO8wNiXVYC4F4XG/Sf9xMWEvLyB66w6zLtS1EXEAyZ5j3qeIxdY4cBMSz+dhokvnFLGjkU2+WXsn/Ole64I4EOURnufGMsB4HRJRW2k3LujQ6/9uFTpVtdPtkuCYXI5C6mbW8vl4T1DipgqxzyCPvEteeCix8a1wzrjUrRELRmuddrqBIh619xq7jExpSn9cEWc+saPEba2JpjMGD2zDp9bCwBwd9N/kNsnLtjNmuBvrjNIDaw7oDA9FZ9DUojMyJz01EipFMdN1ncF7/zl24/eW7BR219NAT8rZXnK0IS+YWZY9kN6W9NxgWE1YSJcMYB0M34eR3BnHEJfzjcWi98FGTQ9H0OpQxYQPjbek1mWlCV62JgsDXlTfRb8NnZKTjTGsZhq1ayoJrbQvnkbfHHdg85RUDEJp1my88H7d6XuHq2Zi4lB0dX0TOgW1GXwk6zcyYuTTGk81etJE2UZc7U221Sp7DErQd1wY++GL+x4h5DnomLGxIrwhqs8QATfZS4mLMP6eSDW7gcwFfIlqs52SFTx9D3xhj1IROGdgzGl/5fjUMl5Z/l4qgQqO9yUO7JJ3KZeKpzpEog4jzmtMZ",
+                "i": 1,
+                "ii": 8
+              },
+              {
+                "s": "text/markdown;ecies",
+                "h": "746578742f6d61726b646f776e3b6563696573",
+                "b": "dGV4dC9tYXJrZG93bjtlY2llcw==",
+                "i": 2,
+                "ii": 9
+              },
+              {
+                "s": "UTF-8",
+                "h": "5554462d38",
+                "b": "VVRGLTg=",
+                "i": 3,
+                "ii": 10
+              }
+            ],
+            "i": 2
+          },
+          {
+            "cell": [
+              {
+                "s": "BPP",
+                "h": "425050",
+                "b": "QlBQ",
+                "i": 0,
+                "ii": 12
+              },
+              {
+                "s": "PAY",
+                "h": "504159",
+                "b": "UEFZ",
+                "i": 1,
+                "ii": 13
+              },
+              {
+                "s": "USD",
+                "h": "555344",
+                "b": "VVNE",
+                "i": 2,
+                "ii": 14
+              },
+              {
+                "s": "user@moneybutton.com:0.09,blockpost@moneybutton.com:0.01",
+                "h": "75736572406d6f6e6579627574746f6e2e636f6d3a302e30392c626c6f636b706f7374406d6f6e6579627574746f6e2e636f6d3a302e3031",
+                "b": "dXNlckBtb25leWJ1dHRvbi5jb206MC4wOSxibG9ja3Bvc3RAbW9uZXlidXR0b24uY29tOjAuMDE=",
+                "i": 3,
+                "ii": 15
+              },
+              {
+                "s": "https://blockpost.network/v1/paywall",
+                "h": "68747470733a2f2f626c6f636b706f73742e6e6574776f726b2f76312f70617977616c6c",
+                "b": "aHR0cHM6Ly9ibG9ja3Bvc3QubmV0d29yay92MS9wYXl3YWxs",
+                "i": 4,
+                "ii": 16
+              }
+            ],
+            "i": 3
+          },
+          {
+            "cell": [
+              {
+                "s": "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5",
+                "h": "3150755161374b36324d694b43747373534c4b79316b683536575755374d74555235",
+                "b": "MVB1UWE3SzYyTWlLQ3Rzc1NMS3kxa2g1NldXVTdNdFVSNQ==",
+                "i": 0,
+                "ii": 18
+              },
+              {
+                "s": "SET",
+                "h": "534554",
+                "b": "U0VU",
+                "i": 1,
+                "ii": 19
+              },
+              {
+                "s": "app",
+                "h": "617070",
+                "b": "YXBw",
+                "i": 2,
+                "ii": 20
+              },
+              {
+                "s": "_test",
+                "h": "5f74657374",
+                "b": "X3Rlc3Q=",
+                "i": 3,
+                "ii": 21
+              },
+              {
+                "s": "type",
+                "h": "74797065",
+                "b": "dHlwZQ==",
+                "i": 4,
+                "ii": 22
+              },
+              {
+                "s": "post",
+                "h": "706f7374",
+                "b": "cG9zdA==",
+                "i": 5,
+                "ii": 23
+              }
+            ],
+            "i": 4
+          },
+          {
+            "cell": [
+              {
+                "s": "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva",
+                "h": "313550636948473232534e4c514a584d6f5355615756693757537163376843667661",
+                "b": "MTVQY2lIRzIyU05MUUpYTW9TVWFXVmk3V1NxYzdoQ2Z2YQ==",
+                "i": 0,
+                "ii": 25
+              },
+              {
+                "s": "BITCOIN_ECDSA",
+                "h": "424954434f494e5f4543445341",
+                "b": "QklUQ09JTl9FQ0RTQQ==",
+                "i": 1,
+                "ii": 26
+              },
+              {
+                "s": "1FKMLgnnyRhmJxrdpR5cjMGhbgUdHbmjdS",
+                "h": "31464b4d4c676e6e7952686d4a787264705235636a4d47686267556448626d6a6453",
+                "b": "MUZLTUxnbm55UmhtSnhyZHBSNWNqTUdoYmdVZEhibWpkUw==",
+                "i": 2,
+                "ii": 27
+              },
+              {
+                "s": " 2C�\u0015?��\u0017\f��O�7\u0003�\u001c��́�gc�@���\u0014\r@���\u001b\u0014��\u0013��Ĉ�E8���L\u0019z�8�]_��\\��",
+                "h": "203243e7bf153ffbeb170caa974fd13703841ce8e3cd81bb6763fe40fa8bfd140d4094f3e61b14a0a013afddc488934538b3dfe94c197ab338e05d5fa8855ca494",
+                "b": "IDJD578VP/vrFwyql0/RNwOEHOjjzYG7Z2P+QPqL/RQNQJTz5hsUoKATr93EiJNFOLPf6UwZerM44F1fqIVcpJQ=",
+                "i": 3,
+                "ii": 28
+              }
+            ],
+            "i": 5
+          }
+        ],
+        "e": {
+          "v": 0,
+          "i": 0,
+          "a": "false"
+        }
+      },
+      {
+        "i": 1,
+        "tape": [
+          {
+            "cell": [
+              {
+                "op": 118,
+                "ops": "OP_DUP",
+                "i": 0,
+                "ii": 0
+              },
+              {
+                "op": 169,
+                "ops": "OP_HASH160",
+                "i": 1,
+                "ii": 1
+              },
+              {
+                "s": "m�\u0014\"��\u0005걤���w\u0006˙�Z3",
+                "h": "6dae1422d9ec05eab1a4cde5e77706cb99ce5a33",
+                "b": "ba4UItnsBeqxpM3l53cGy5nOWjM=",
+                "i": 2,
+                "ii": 2
+              },
+              {
+                "op": 136,
+                "ops": "OP_EQUALVERIFY",
+                "i": 3,
+                "ii": 3
+              },
+              {
+                "op": 172,
+                "ops": "OP_CHECKSIG",
+                "i": 4,
+                "ii": 4
+              }
+            ],
+            "i": 0
+          }
+        ],
+        "e": {
+          "v": 21907,
+          "i": 1,
+          "a": "1AzwC7BiGLuFuHHqrDxxfFyetHCbAmJzok"
+        }
+      }
+    ],
+    "blk": {
+      "i": 672704,
+      "h": "0000000000000000085d65f73501faf782100df478747a3dcab3815764d0321a",
+      "t": 1612293738
+    }
+  }
+]

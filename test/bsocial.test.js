@@ -1,4 +1,6 @@
 import { describe, expect, beforeEach, afterEach, test, } from '@jest/globals';
+import { enableFetchMocks } from 'jest-fetch-mock';
+enableFetchMocks();
 import { BSOCIAL } from '../src/schemas/bsocial';
 import { Errors } from '../src/schemas/errors';
 import { Status } from '../src/schemas/status';
@@ -12,6 +14,8 @@ import {
 } from '../src/bsocial';
 
 import ops from './data/ops.json';
+import bpp from './data/bpp.json';
+import bsocial from './data/bsocial.json';
 
 describe('getBitsocketQuery', () => {
   test('lastBlockIndexed', () => {
@@ -22,6 +26,11 @@ describe('getBitsocketQuery', () => {
 });
 
 describe('parseBSocialTransaction', () => {
+  beforeEach(async () => {
+    await BSOCIAL.deleteMany({});
+    await Errors.deleteMany({});
+  });
+
   test('parse basic', async () => {
     const parsed = await parseBSocialTransaction(ops[0]);
     expect(typeof parsed).toBe('object');
@@ -31,6 +40,16 @@ describe('parseBSocialTransaction', () => {
     expect(parsed.B[0].content).toBe('Hello World!\n\n');
     expect(parsed.MAP[0].app).toBe('_test');
     expect(parsed.AIP[0].verified).toBe(true);
+  });
+
+  test('parse tip', async () => {
+    const parsed = await parseBSocialTransaction(ops[2]);
+    expect(typeof parsed).toBe('object');
+    expect(typeof parsed.MAP[0]).toBe('object');
+    expect(parsed.MAP[0].app).toBe('_test');
+    expect(parsed.MAP[0].type).toBe('tip');
+    expect(parsed.MAP[0].context).toBe('tx');
+    expect(parsed.MAP[0].tx).toBe('fa27f91587ee48f10ee1c8859c6daccdd90e11d59d2fe4d9947ae7620be2754d');
   });
 
   test('parse incorrect ', async () => {
@@ -54,6 +73,24 @@ const testDBInsert = function (bSocial) {
 
 describe('database functions', () => {
   beforeEach(async () => {
+    fetch.mockResponse(req => {
+      return {
+        then() {
+          return {
+            json() {
+              return {
+                status: 'OK',
+                result: {
+                  status: 'ERROR',
+                  message: 'Could not find identity',
+                  errorCode: 404,
+                },
+              }
+            }
+          };
+        }
+      }
+    });
     await BSOCIAL.deleteMany({});
     await Errors.deleteMany({});
   });
@@ -83,6 +120,15 @@ describe('database functions', () => {
     expect(bSocial.txId).toEqual(undefined);
     expect(bSocial.block).toEqual(undefined);
     testDBInsert(bSocial);
+  });
+
+  test('processBlockEvents tip', async () => {
+    await processBlockEvents(ops[2]);
+    const bSocial = await BSOCIAL.findOne({_id: '881b955dad644a8923db46a0efad783906365fd6751d56390839abac5383f122'});
+    expect(bSocial.MAP.length).toEqual(1);
+    expect(bSocial.MAP[0].type).toEqual('tip');
+    expect(bSocial.timestamp).toEqual(1612303485);
+    expect(bSocial.processed).toEqual(true);
   });
 
   test('processBlockEvents error', async () => {
@@ -126,5 +172,44 @@ describe('database functions', () => {
     const error = await Errors.findOne({_id: '123123123'});
     expect(error.txId).toEqual('123123123');
     expect(error.test).toEqual('test');
+  });
+});
+
+describe('BPP transaction', () => {
+  beforeEach(async () => {
+    await BSOCIAL.deleteMany({});
+    await Errors.deleteMany({});
+  });
+
+  test('parse basic', async () => {
+    const parsed = await parseBSocialTransaction(bpp[0]);
+    expect(typeof parsed).toBe('object');
+    expect(typeof parsed.B[0]).toBe('object');
+    expect(typeof parsed.MAP[0]).toBe('object');
+    expect(typeof parsed.AIP[0]).toBe('object');
+    expect(typeof parsed.BPP[0]).toBe('object');
+    expect(parsed.B[0].content).toBe('This is a test paywall transaction.\n\n');
+    expect(parsed.MAP[0].app).toBe('_test');
+
+    expect(parsed.BPP[0].action).toBe('PAY');
+    expect(parsed.BPP[0].currency).toBe('USD');
+    expect(parsed.BPP[0].address).toBe('user@moneybutton.com:0.09,blockpost@moneybutton.com:0.01');
+    expect(parsed.BPP[0].apiEndpoint).toBe('https://blockpost.network/v1/paywall');
+  });
+});
+
+describe('ECIES transaction', () => {
+  beforeEach(async () => {
+    await BSOCIAL.deleteMany({});
+    await Errors.deleteMany({});
+  });
+
+  test('parse basic', async () => {
+    await processBSocialTransaction(bsocial[0]);
+    const bSocial = await BSOCIAL.findOne({_id: 'a78e5172303e629d0197b68daa2bce03ac1a5c111054d40b738cc19cc24702c0'});
+    // normal content should not have been touched
+    expect(bSocial.B[0].content).toEqual('This is a test paywall transaction.');
+    // ecies content should be hexed
+    expect(bSocial.B[1].content).toEqual('424945');
   });
 });

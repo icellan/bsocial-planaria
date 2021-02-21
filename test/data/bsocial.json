@@ -1,0 +1,46 @@
+[
+  {
+    "txId": "a78e5172303e629d0197b68daa2bce03ac1a5c111054d40b738cc19cc24702c0",
+    "B": [
+      {
+        "content": "This is a test paywall transaction.",
+        "content-type": "text/markdown",
+        "encoding": "UTF-8"
+      },
+      {
+        "content": "BIE",
+        "content-type": "text/markdown;ecies",
+        "encoding": "UTF-8"
+      }
+    ],
+    "MAP": [
+      {
+        "cmd": "SET",
+        "app": "_test",
+        "type": "post"
+      }
+    ],
+    "AIP": [
+      {
+        "algorithm": "BITCOIN_ECDSA",
+        "address": "1FKMLgnnyRhmJxrdpR5cjMGhbgUdHbmjdS",
+        "signature": "IDJD578VP/vrFwyql0/RNwOEHOjjzYG7Z2P+QPqL/RQNQJTz5hsUoKATr93EiJNFOLPf6UwZerM44F1fqIVcpJQ=",
+        "index": [
+
+        ],
+        "verified": true,
+        "bapId": "ce007938819c927a94af9f52524a65a205e9917fd4b099b61dbc869eade43278"
+      }
+    ],
+    "timestamp": 1612293738,
+    "block": 672704,
+    "BPP": [
+      {
+        "action": "PAY",
+        "currency": "USD",
+        "address": "siggi@moneybutton.com:0.09,blockpost@moneybutton.com:0.01",
+        "apiEndpoint": "https://blockpost.network/v1/paywall"
+      }
+    ]
+  }
+]
