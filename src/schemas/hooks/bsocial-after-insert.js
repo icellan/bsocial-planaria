@@ -63,17 +63,17 @@ const bSocialAfterInsertTip = async function (map, idKey) {
   }
 };
 
-const bSocialAfterInsertPayment = async function (map, idKey, doc) {
+const bSocialAfterInsertPayment = async function (map, doc) {
   if (
     map.type === 'payment'
     && map.context === 'tx'
     && map.tx
     && doc.BPP
     && doc.BPP[0]
-    && doc.BPP[0].currency === idKey // idKey in currency field when PAID
+    && doc.BPP[0].address
   ) {
-    await updateActionStats(map, idKey, PAYMENTS, 'payments', {
-      address: doc.BPP[0].address,
+    const { address } = doc.BPP[0];
+    await updateActionStats(map, address, PAYMENTS, 'payments', {
       decryptionKey: doc.BPP[0].apiEndpoint, // decryption key field when PAID
     });
   }
@@ -126,7 +126,7 @@ export const bSocialAfterInsert = async function (doc) {
         } else if (map.type === 'tip' && map.context === 'tx') {
           await bSocialAfterInsertTip(map, idKey);
         } else if (map.type === 'payment' && map.context === 'tx') {
-          await bSocialAfterInsertPayment(map, idKey, doc);
+          await bSocialAfterInsertPayment(map, doc);
         } else if (map.type === 'follow' && map.idKey) {
           await bSocialAfterInsertFollow(map, idKey);
         } else if (map.type === 'unfollow' && map.idKey) {

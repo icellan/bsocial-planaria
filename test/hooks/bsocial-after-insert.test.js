@@ -161,12 +161,15 @@ describe('bSocialAfterInsert payment', () => {
 
   test('payment', async () => {
     const useDoc = {...doc};
+    const address = '1K4c6YXR1ixNLAqrL8nx5HUQAPKbACTwDo';
+    const addressId = bsv.crypto.Hash.sha256(Buffer.from(`${address}${tx}`, 'hex')).toString('hex');
+
     useDoc.MAP[0].type = 'payment';
     useDoc.BPP = [
       {
         action: 'PAID',
-        currency: idKey,
-        address: '1K4c6YXR1ixNLAqrL8nx5HUQAPKbACTwDo',
+        currency: 'txId',
+        address: address,
         apiEndpoint: '<ECIES encrypted decryption key>',
 
   }
@@ -174,10 +177,9 @@ describe('bSocialAfterInsert payment', () => {
     await bSocialAfterInsert(useDoc);
     const payment = await PAYMENTS.findOne();
     expect(typeof payment).toBe('object');
-    expect(payment._id).toBe(_id);
-    expect(payment.idKey).toBe(idKey);
+    expect(payment._id).toBe(addressId);
+    expect(payment.idKey).toBe(address);
     expect(payment.tx).toBe(tx);
-    expect(payment.address).toBe(useDoc.BPP[0].address);
     expect(payment.decryptionKey).toBe(useDoc.BPP[0].apiEndpoint);
   });
 });

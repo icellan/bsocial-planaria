@@ -1,6 +1,6 @@
 {
   "name": "bsocial-planaria",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Bitcoin Social indexer to MongoDB",
   "author": "icellan (https://github.com/icellan)",
   "license": "Open BSV License",

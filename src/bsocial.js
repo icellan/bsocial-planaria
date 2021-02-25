@@ -108,7 +108,7 @@ export const addErrorTransaction = async function (op) {
   });
 };
 
-const getBAPIdByAddress = async function (address, block, timestamp) {
+export const getBAPIdByAddress = async function (address, block, timestamp) {
   // use BAP API
   // TODO: allow to set a mongoUrl and use a local instance, using the BAP class
   if (bapApiUrl) {
