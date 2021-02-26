@@ -13,6 +13,7 @@ import { Errors } from './schemas/errors';
 import { getBitbusBlockEvents } from './get';
 import { getStatusValue, updateStatusValue } from './status';
 import { cleanDocumentKeys } from './lib/utils';
+import { getDB } from './lib/db';
 
 export const FIRST_BSOCIAL_BLOCK = 671145;
 
@@ -108,26 +109,41 @@ export const addErrorTransaction = async function (op) {
   });
 };
 
+let bapDB;
 export const getBAPIdByAddress = async function (address, block, timestamp) {
-  // use BAP API
-  // TODO: allow to set a mongoUrl and use a local instance, using the BAP class
   if (bapApiUrl) {
-    // fetch ...
-    const result = await fetch(`${bapApiUrl}/identity/validByAddress`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        address,
-        block,
-        timestamp,
-      }),
-    });
-    const data = await result.json();
-    if (data && data.status === 'OK' && data.result) {
-      return data.result;
+    if (bapApiUrl.match('mongodb://')) {
+      // This uses the local mongodb, which should be up2date with a bap-planaria
+      if (!bapDB) {
+        bapDB = await getDB(bapApiUrl);
+      }
+      const bap = await bapDB.collection('id').findOne({
+        'addresses.address': address,
+      });
+      if (bap) {
+        // TODO check whether it is valid at block / timestamp
+        return {
+          idKey: bap._id,
+          valid: true,
+        };
+      }
+    } else {
+      const result = await fetch(`${bapApiUrl}/identity/validByAddress`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          address,
+          block,
+          timestamp,
+        }),
+      });
+      const data = await result.json();
+      if (data && data.status === 'OK' && data.result) {
+        return data.result;
+      }
     }
   }
 

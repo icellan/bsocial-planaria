@@ -8,9 +8,9 @@ let db = null;
  *
  * @returns {Promise<null|Db>}
  */
-export const getDB = async function () {
+export const getDB = async function (mongodbConnectionUrl = false) {
   if (!db) {
-    const client = new connect.MongoClient(mongoUrl, {
+    const client = new connect.MongoClient(mongodbConnectionUrl || mongoUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       keepAlive: 1,

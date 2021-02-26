@@ -1,6 +1,6 @@
 {
   "name": "bsocial-planaria",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Bitcoin Social indexer to MongoDB",
   "author": "icellan (https://github.com/icellan)",
   "license": "Open BSV License",
@@ -34,6 +34,7 @@
   ],
   "dependencies": {
     "bmapjs": "^0.3.2",
+    "bsv": "^1.5.4",
     "event-stream": "^4.0.1",
     "eventsource": "^1.0.7",
     "mongodb": "^3.6.2",
@@ -41,9 +42,6 @@
     "reconnecting-eventsource": "^1.1.0",
     "simpl-schema": "^1.10.2",
     "yargs": "^16.2.0"
-  },
-  "peerDependencies": {
-    "bsv": "^1.5.x"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
