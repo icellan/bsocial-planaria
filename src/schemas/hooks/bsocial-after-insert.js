@@ -15,7 +15,7 @@ const updateActionStats = async function (
   additionalKeys = false,
 ) {
   const { tx } = map;
-  const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${tx}`, 'hex')).toString('hex');
+  const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${tx}`)).toString('hex');
   const existing = await collection.findOne({ _id });
   if (!existing) {
     let registerAction = {
@@ -81,7 +81,7 @@ const bSocialAfterInsertPayment = async function (map, doc) {
 
 const bSocialAfterInsertFollow = async function (map, idKey) {
   if (map.type === 'follow' && map.idKey) {
-    const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${map.idKey}`, 'hex')).toString('hex');
+    const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${map.idKey}`)).toString('hex');
     const existing = await FOLLOWS.findOne({ _id });
     if (!existing) {
       const registerAction = {
@@ -97,7 +97,7 @@ const bSocialAfterInsertFollow = async function (map, idKey) {
 
 const bSocialAfterInsertUnfollow = async function (map, idKey) {
   if (map.type === 'unfollow' && map.idKey) {
-    const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${map.idKey}`, 'hex')).toString('hex');
+    const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${map.idKey}`)).toString('hex');
     const existing = await FOLLOWS.findOne({ _id });
     if (existing) {
       await FOLLOWS.deleteOne({

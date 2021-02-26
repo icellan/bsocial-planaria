@@ -13,7 +13,7 @@ import { PAYMENTS } from '../../src/schemas/payments';
 
 const idKey = 'c38bc59316de9783b5f7a8ba19bc5d442f6c9b0988c48a241d1c58a1f4e9ae19';
 const tx = '868e663652556fa133878539b6c65093e36bef1a6497e511bdf0655b2ce1c935';
-const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${tx}`, 'hex')).toString('hex');
+const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${tx}`)).toString('hex');
 
 const doc = {
   AIP: [
@@ -59,7 +59,7 @@ const unFollowDoc = {
     }
   ]
 };
-const follow_id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}follow_id_key`, 'hex')).toString('hex');
+const follow_id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}follow_id_key`)).toString('hex');
 
 describe('bSocialAfterInsert like', () => {
   beforeEach(async () => {
@@ -162,7 +162,7 @@ describe('bSocialAfterInsert payment', () => {
   test('payment', async () => {
     const useDoc = {...doc};
     const address = '1K4c6YXR1ixNLAqrL8nx5HUQAPKbACTwDo';
-    const addressId = bsv.crypto.Hash.sha256(Buffer.from(`${address}${tx}`, 'hex')).toString('hex');
+    const addressId = bsv.crypto.Hash.sha256(Buffer.from(`${address}${tx}`)).toString('hex');
 
     useDoc.MAP[0].type = 'payment';
     useDoc.BPP = [
