@@ -16,9 +16,11 @@ export const watchBSocialTransactions = async function (queryFind = false) {
   const sock = new ReconnectingEventSource(url);
   sock.onmessage = async function (e) {
     const events = JSON.parse(e.data).data;
-    events.forEach((event) => {
-      processBlockEvents(event);
-    });
+    if (events && events.length > 0) {
+      events.forEach((event) => {
+        processBlockEvents(event);
+      });
+    }
   };
 
   // get mined blocks
