@@ -11,11 +11,13 @@ import { TIPS } from '../../src/schemas/tips';
 import { FOLLOWS } from '../../src/schemas/follows';
 import { PAYMENTS } from '../../src/schemas/payments';
 
+const txId = 'bc2298e0db1edb01d37cab535e2d639c830a0cb703bbb78b903466b39fe1f0dd';
 const idKey = 'c38bc59316de9783b5f7a8ba19bc5d442f6c9b0988c48a241d1c58a1f4e9ae19';
 const tx = '868e663652556fa133878539b6c65093e36bef1a6497e511bdf0655b2ce1c935';
 const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${tx}`)).toString('hex');
 
 const doc = {
+  _id: txId,
   AIP: [
     {
       bapId: idKey,
@@ -32,6 +34,7 @@ const doc = {
 };
 
 const followDoc = {
+  _id: txId,
   AIP: [
     {
       bapId: idKey,
@@ -46,6 +49,7 @@ const followDoc = {
   ]
 };
 const unFollowDoc = {
+  _id: txId,
   AIP: [
     {
       bapId: idKey,
@@ -71,6 +75,7 @@ describe('bSocialAfterInsert like', () => {
     const like = await LIKES.findOne();
     expect(typeof like).toBe('object');
     expect(like._id).toBe(_id);
+    expect(like.txId).toBe(txId);
     expect(like.idKey).toBe(idKey);
     expect(like.tx).toBe(tx);
   });
@@ -88,6 +93,7 @@ describe('bSocialAfterInsert repost', () => {
     const repost = await REPOSTS.findOne();
     expect(typeof repost).toBe('object');
     expect(repost._id).toBe(_id);
+    expect(repost.txId).toBe(txId);
     expect(repost.idKey).toBe(idKey);
     expect(repost.tx).toBe(tx);
   });
@@ -105,6 +111,7 @@ describe('bSocialAfterInsert comment', () => {
     const comment = await COMMENTS.findOne();
     expect(typeof comment).toBe('object');
     expect(comment._id).toBe(_id);
+    expect(comment.txId).toBe(txId);
     expect(comment.idKey).toBe(idKey);
     expect(comment.tx).toBe(tx);
   });
@@ -122,6 +129,7 @@ describe('bSocialAfterInsert tip', () => {
     const tip = await TIPS.findOne();
     expect(typeof tip).toBe('object');
     expect(tip._id).toBe(_id);
+    expect(tip.txId).toBe(txId);
     expect(tip.idKey).toBe(idKey);
     expect(tip.tx).toBe(tx);
   });
@@ -137,6 +145,7 @@ describe('bSocialAfterInsert follow', () => {
     const follow = await FOLLOWS.findOne();
     expect(typeof follow).toBe('object');
     expect(follow._id).toBe(follow_id);
+    expect(follow.txId).toBe(txId);
     expect(follow.idKey).toBe(idKey);
     expect(follow.follows).toBe('follow_id_key');
     expect(typeof follow.t).toBe('number');
@@ -147,6 +156,7 @@ describe('bSocialAfterInsert follow', () => {
     const follow = await FOLLOWS.findOne();
     expect(typeof follow).toBe('object');
     expect(follow._id).toBe(follow_id);
+    expect(follow.txId).toBe(txId);
 
     await bSocialAfterInsert(unFollowDoc);
     const follow2 = await FOLLOWS.findOne();
@@ -178,6 +188,7 @@ describe('bSocialAfterInsert payment', () => {
     const payment = await PAYMENTS.findOne();
     expect(typeof payment).toBe('object');
     expect(payment._id).toBe(addressId);
+    expect(payment.txId).toBe(txId);
     expect(payment.idKey).toBe(address);
     expect(payment.tx).toBe(tx);
     expect(payment.decryptionKey).toBe(useDoc.BPP[0].apiEndpoint);

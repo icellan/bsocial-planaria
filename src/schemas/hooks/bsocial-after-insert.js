@@ -8,6 +8,7 @@ import { PAYMENTS } from '../payments';
 import { FOLLOWS } from '../follows';
 
 const updateActionStats = async function (
+  txId,
   map,
   idKey,
   collection,
@@ -20,6 +21,7 @@ const updateActionStats = async function (
   if (!existing) {
     let registerAction = {
       _id,
+      txId,
       idKey,
       tx,
       t: Math.round(+new Date() / 1000),
@@ -39,31 +41,31 @@ const updateActionStats = async function (
   }
 };
 
-const bSocialAfterInsertLike = async function (map, idKey) {
+const bSocialAfterInsertLike = async function (txId, map, idKey) {
   if (map.type === 'like' && map.context === 'tx' && map.tx) {
-    await updateActionStats(map, idKey, LIKES, 'likes');
+    await updateActionStats(txId, map, idKey, LIKES, 'likes');
   }
 };
 
-const bSocialAfterInsertRepost = async function (map, idKey) {
+const bSocialAfterInsertRepost = async function (txId, map, idKey) {
   if (map.type === 'repost' && map.tx) {
-    await updateActionStats(map, idKey, REPOSTS, 'reposts');
+    await updateActionStats(txId, map, idKey, REPOSTS, 'reposts');
   }
 };
 
-const bSocialAfterInsertComment = async function (map, idKey) {
+const bSocialAfterInsertComment = async function (txId, map, idKey) {
   if (map.type === 'post' && map.context === 'tx' && map.tx) {
-    await updateActionStats(map, idKey, COMMENTS, 'comments');
+    await updateActionStats(txId, map, idKey, COMMENTS, 'comments');
   }
 };
 
-const bSocialAfterInsertTip = async function (map, idKey) {
+const bSocialAfterInsertTip = async function (txId, map, idKey) {
   if (map.type === 'tip' && map.context === 'tx' && map.tx) {
-    await updateActionStats(map, idKey, TIPS, 'tips');
+    await updateActionStats(txId, map, idKey, TIPS, 'tips');
   }
 };
 
-const bSocialAfterInsertPayment = async function (map, doc) {
+const bSocialAfterInsertPayment = async function (txId, map, doc) {
   if (
     map.type === 'payment'
     && map.context === 'tx'
@@ -73,19 +75,20 @@ const bSocialAfterInsertPayment = async function (map, doc) {
     && doc.BPP[0].address
   ) {
     const { address } = doc.BPP[0];
-    await updateActionStats(map, address, PAYMENTS, 'payments', {
+    await updateActionStats(txId, map, address, PAYMENTS, 'payments', {
       decryptionKey: doc.BPP[0].apiEndpoint, // decryption key field when PAID
     });
   }
 };
 
-const bSocialAfterInsertFollow = async function (map, idKey) {
+const bSocialAfterInsertFollow = async function (txId, map, idKey) {
   if (map.type === 'follow' && map.idKey) {
     const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${map.idKey}`)).toString('hex');
     const existing = await FOLLOWS.findOne({ _id });
     if (!existing) {
       const registerAction = {
         _id,
+        txId,
         idKey,
         follows: map.idKey,
         t: Math.round(+new Date() / 1000),
@@ -95,7 +98,7 @@ const bSocialAfterInsertFollow = async function (map, idKey) {
   }
 };
 
-const bSocialAfterInsertUnfollow = async function (map, idKey) {
+const bSocialAfterInsertUnfollow = async function (txId, map, idKey) {
   if (map.type === 'unfollow' && map.idKey) {
     const _id = bsv.crypto.Hash.sha256(Buffer.from(`${idKey}${map.idKey}`)).toString('hex');
     const existing = await FOLLOWS.findOne({ _id });
@@ -115,22 +118,23 @@ export const bSocialAfterInsert = async function (doc) {
     // only process verified transactions
     const idKey = doc.AIP[0].bapId || Buffer.from(doc.AIP[0].address).toString('hex');
     if (doc.MAP) {
+      const txId = doc._id;
       for (let i = 0; i < doc.MAP.length; i++) {
         const map = doc.MAP[i];
         if (map.type === 'like') {
-          await bSocialAfterInsertLike(map, idKey);
+          await bSocialAfterInsertLike(txId, map, idKey);
         } else if (map.type === 'repost') {
-          await bSocialAfterInsertRepost(map, idKey);
+          await bSocialAfterInsertRepost(txId, map, idKey);
         } else if (map.type === 'post' && map.context === 'tx') {
-          await bSocialAfterInsertComment(map, idKey);
+          await bSocialAfterInsertComment(txId, map, idKey);
         } else if (map.type === 'tip' && map.context === 'tx') {
-          await bSocialAfterInsertTip(map, idKey);
+          await bSocialAfterInsertTip(txId, map, idKey);
         } else if (map.type === 'payment' && map.context === 'tx') {
-          await bSocialAfterInsertPayment(map, doc);
+          await bSocialAfterInsertPayment(txId, map, doc);
         } else if (map.type === 'follow' && map.idKey) {
-          await bSocialAfterInsertFollow(map, idKey);
+          await bSocialAfterInsertFollow(txId, map, idKey);
         } else if (map.type === 'unfollow' && map.idKey) {
-          await bSocialAfterInsertUnfollow(map, idKey);
+          await bSocialAfterInsertUnfollow(txId, map, idKey);
         }
       }
     }
