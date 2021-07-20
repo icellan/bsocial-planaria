@@ -1,0 +1,81 @@
+[
+  {
+    "_id": "dd4ac9404956b0aa5d9ed70f9d6e8c6868d05b40704e24e97daa649a0c84d6e6",
+    "B": [
+      {
+        "content": "https://twetch.app/t/16b70974356dd2c191312cc9e75df12b19a3c216ec0650dde6adaafcaa95fc70",
+        "content-type": "text/plain",
+        "encoding": "text",
+        "filename": "twetch_twtext_1626627975358.txt"
+      }
+    ],
+    "MAP": [
+      {
+        "cmd": "SET",
+        "twdata_json": "null",
+        "url": "null",
+        "comment": "null",
+        "mb_user": "13393",
+        "reply": "null",
+        "type": "post",
+        "timestamp": "null",
+        "app": "twetch",
+        "invoice": "c4c15589-a204-436e-aff4-31a1b398e852"
+      }
+    ],
+    "AIP": [
+      {
+        "algorithm": "BITCOIN_ECDSA",
+        "address": "15J9HxQNQCZCmejNHvaWWALRVETSJiDBgu",
+        "signature": "HwBfmUPaitiEskHaBzb4fSf80KDvP5A4GUQndv7Uv+MxTB+Sk3jFohpC3chPrFKOQ7kxsOLv4lKsRUvQGA/z3Oo=",
+        "index": [
+
+        ],
+        "verified": false
+      }
+    ],
+    "timestamp": 1626627978,
+    "processed": true
+  },
+  {
+    "_id": "0000324ded90f2459d83e454399f1136655378a3d1228c3c24f217069b1099c3",
+    "B": [
+      {
+        "content": "Apparently you need more than one handle to use that feature.",
+        "content-type": "text/plain",
+        "encoding": "text",
+        "filename": "twetch_twtext_1616958310446.txt"
+      }
+    ],
+    "MAP": [
+      {
+        "cmd": "SET",
+        "twdata_json": "null",
+        "url": "null",
+        "comment": "null",
+        "mb_user": "null",
+        "reply": "ca8b5ead89b42f744b4c43e4dcdb871e731a58c534abe0f7c00a1274ca35cf8d",
+        "type": "post",
+        "timestamp": "null",
+        "app": "twetch",
+        "invoice": "66a68bec-fbe7-49f8-bdb8-2e8d4be13411",
+        "context": "tx",
+        "tx": "ca8b5ead89b42f744b4c43e4dcdb871e731a58c534abe0f7c00a1274ca35cf8d"
+      }
+    ],
+    "AIP": [
+      {
+        "algorithm": "BITCOIN_ECDSA",
+        "address": "1DLgwRS8kKtNdzX5PnCLxH2V9VZKgySYHH",
+        "signature": "IEphNSTc2QbR8x1lZ6rLrqjPAQcIOyXcGy+W5KexiGjhWSzkT9nNim3+ZeiuW521RO8EWoY36TZUKqi8bGVMSSU=",
+        "index": [
+
+        ],
+        "verified": false
+      }
+    ],
+    "block": 680445,
+    "timestamp": 1616961150,
+    "processed": true
+  }
+]

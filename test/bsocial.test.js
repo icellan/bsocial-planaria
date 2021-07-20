@@ -16,6 +16,7 @@ import {
 import ops from './data/ops.json';
 import bpp from './data/bpp.json';
 import bsocial from './data/bsocial.json';
+import twetch from './data/twetch.json';
 
 describe('getBitsocketQuery', () => {
   test('lastBlockIndexed', () => {
@@ -211,5 +212,32 @@ describe('ECIES transaction', () => {
     expect(bSocial.B[0].content).toEqual('This is a test paywall transaction.');
     // ecies content should be hexed
     expect(bSocial.B[1].content).toEqual('424945');
+  });
+});
+
+describe('Twetch transaction', () => {
+  beforeEach(async () => {
+    await BSOCIAL.deleteMany({});
+    await Errors.deleteMany({});
+  });
+
+  test('repost', async () => {
+    await processBSocialTransaction(twetch[0]);
+    const bSocial = await BSOCIAL.findOne({_id: 'dd4ac9404956b0aa5d9ed70f9d6e8c6868d05b40704e24e97daa649a0c84d6e6'});
+    // normal content should not have been touched
+    expect(bSocial.B[0].content).toEqual(undefined);
+    expect(bSocial.MAP[0].type).toEqual('repost');
+    expect(bSocial.MAP[0].context).toEqual('tx');
+    expect(bSocial.MAP[0].tx).toEqual('16b70974356dd2c191312cc9e75df12b19a3c216ec0650dde6adaafcaa95fc70');
+  });
+
+  test('reply', async () => {
+    await processBSocialTransaction(twetch[1]);
+    const bSocial = await BSOCIAL.findOne({_id: '0000324ded90f2459d83e454399f1136655378a3d1228c3c24f217069b1099c3'});
+    // normal content should not have been touched
+    expect(bSocial.B[0].content).toEqual("Apparently you need more than one handle to use that feature.");
+    expect(bSocial.MAP[0].type).toEqual('post');
+    expect(bSocial.MAP[0].context).toEqual('tx');
+    expect(bSocial.MAP[0].tx).toEqual('ca8b5ead89b42f744b4c43e4dcdb871e731a58c534abe0f7c00a1274ca35cf8d');
   });
 });

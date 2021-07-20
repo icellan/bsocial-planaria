@@ -1,16 +1,14 @@
-import es from 'event-stream';
 import BMAP from 'bmapjs';
 import 'node-fetch';
 import { bmapQuerySchemaHandler } from 'bmapjs/dist/utils';
 import {
   DEBUG,
   MAP_BITCOM_ADDRESS,
-  TOKEN,
   bapApiUrl,
 } from './config';
 import { BSOCIAL } from './schemas/bsocial';
 import { Errors } from './schemas/errors';
-import { getBitbusBlockEvents } from './get';
+import { getBitbusStreamingEvents } from './get';
 import { getStatusValue, updateStatusValue } from './status';
 import { cleanDocumentKeys } from './lib/utils';
 import { getDB } from './lib/db';
@@ -21,45 +19,10 @@ export const getBitsocketQuery = function (lastBlockIndexed = false, queryFind =
   queryFind = queryFind || {
     $and: [
       {
-        'out.tape.cell': {
-          $elemMatch: {
-            i: 0,
-            s: MAP_BITCOM_ADDRESS,
-          },
-        },
-      },
-      {
-        'out.tape.cell': {
-          $elemMatch: {
-            i: 1,
-            s: 'SET',
-          },
-        },
-      },
-      {
-        'out.tape.cell': {
-          $elemMatch: {
-            i: 2,
-            s: 'app',
-          },
-        },
-      },
-      {
-        'out.tape.cell': {
-          $elemMatch: {
-            i: 4,
-            s: 'type',
-          },
-        },
-      },
-      {
-        'out.tape.cell': {
-          $elemMatch: {
-            i: 5,
-            s: {
-              $in: ['post', 'like', 'follow', 'unfollow', 'attachment', 'tip', 'payment'],
-            },
-          },
+        'out.tape.cell.s': MAP_BITCOM_ADDRESS
+      },{
+        'out.tape.cell.s': {
+          $in: ['post', 'like', 'follow', 'unfollow', 'attachment', 'tip', 'payment', 'comment'],
         },
       },
     ],
@@ -90,7 +53,7 @@ export const getBitsocketQuery = function (lastBlockIndexed = false, queryFind =
 };
 
 export const updateLastBlock = async function (block) {
-  return updateStatusValue('lastBSocialBlock', block);
+  return updateStatusValue('lastBSocialBlock', '' + block);
 };
 
 export const getLastBlockIndex = async function () {
@@ -168,6 +131,15 @@ export const processBSocialTransaction = async function (transaction) {
     }
   }
 
+  // Twetch does not follow BSocial protocol 100%
+  const bSocialReply = query.MAP[0]?.context === 'tx' && query.MAP[0]?.tx;
+  const twetchPost = query.MAP[0]?.app === 'twetch'
+  const twetchReply = twetchPost && query.MAP[0]?.reply && query.MAP[0]?.reply !== 'null';
+  if (twetchReply && !bSocialReply) {
+    query.MAP[0].context = 'tx';
+    query.MAP[0].tx = query.MAP[0].reply;
+  }
+
   // check for binary / encrypted B data
   if (query.B) {
     for (let i = 0; i < query.B.length; i++) {
@@ -180,6 +152,15 @@ export const processBSocialTransaction = async function (transaction) {
       } catch (e) {
         console.error(e);
       }
+    }
+
+    const twetchUrlRegex = new RegExp("https://twetch.app/t/([0-9a-zA-Z]+)", "i");
+    const twetchRepost = twetchPost && query.B[0]?.content?.match(twetchUrlRegex);
+    if (twetchRepost && twetchRepost[1]) {
+      query.B[0].content = query.B[0].content.replace(twetchUrlRegex, "");
+      query.MAP[0].type = 'repost';
+      query.MAP[0].context = 'tx';
+      query.MAP[0].tx = twetchRepost[1];
     }
   }
 
@@ -256,24 +237,48 @@ export const parseBSocialTransaction = async function (op) {
   }
 };
 
+export const isBSocialOp = function(op) {
+  if (op.MAP && op.MAP.length > 0) {
+    return !!op.MAP.find((map) => {
+      return map.cmd === 'SET'
+        && map.app
+        && [
+          'post',
+          'like',
+          'follow',
+          'unfollow',
+          'attachment',
+          'tip',
+          'payment'
+        ].includes(map.type);
+    });
+  }
+
+  return false;
+};
+
+let blockIndex;
 export const processBlockEvents = async function (op) {
   try {
     const txId = op.tx.h;
     const block = op.blk && op.blk.i;
     const timestamp = (op.blk && op.blk.t) || Math.round((+new Date()) / 1000);
 
-    console.log('got bSocial transaction', txId, block || 'mempool');
     /* eslint-disable no-await-in-loop */
     const bSocialOp = await parseBSocialTransaction(op);
-    if (bSocialOp) {
+    if (isBSocialOp(bSocialOp)) {
+      console.log('got bSocial transaction', txId, block || 'mempool');
+
       bSocialOp._id = txId;
       bSocialOp.block = block;
       bSocialOp.timestamp = timestamp;
 
       /* eslint-disable no-await-in-loop */
       await processBSocialTransaction(bSocialOp);
-      if (bSocialOp.block) {
-        await updateLastBlock(bSocialOp.block);
+      if (bSocialOp.block && bSocialOp.block !== blockIndex) {
+        console.log('UPDATE BLOCK', bSocialOp.block, typeof bSocialOp.block);
+        await updateLastBlock(blockIndex);
+        blockIndex = bSocialOp.block;
       }
     } else {
       op.txId = txId;
@@ -288,51 +293,12 @@ export const processBlockEvents = async function (op) {
 
 export const indexBSocialTransactions = async function (queryFind) {
   const lastBlockIndexed = await getLastBlockIndex();
+  blockIndex = lastBlockIndexed;
   const query = getBitsocketQuery(lastBlockIndexed, queryFind);
 
-  const data = await getBitbusBlockEvents(query);
-  for (let i = 0; i < data.length; i++) {
-    await processBlockEvents(data[i]);
-  }
+  await getBitbusStreamingEvents(query, lastBlockIndexed, async function(event) {
+    await processBlockEvents(event);
+  });
 
   return true;
-};
-
-export const indexBSocialTransactionsStream = async function (queryFind = false) {
-  const lastBlockIndexed = await getLastBlockIndex();
-
-  if (DEBUG) console.log('POST https://bob.bitbus.network/block');
-  const response = await fetch('https://bob.bitbus.network/block', {
-    method: 'post',
-    headers: {
-      'Content-type': 'application/json; charset=utf-8',
-      token: TOKEN,
-      from: FIRST_BSOCIAL_BLOCK,
-    },
-    body: JSON.stringify(getBitsocketQuery(lastBlockIndexed, queryFind)),
-  });
-
-  return new Promise((resolve, reject) => {
-    if (DEBUG) console.log('PROCESSING BODY');
-    response.body.on('sfinish', () => {
-      if (DEBUG) console.log('FINISHED BODY');
-      resolve();
-    });
-    response.body.on('end', () => {
-      if (DEBUG) console.log('END BODY');
-      resolve();
-    });
-    response.body.on('error', (e) => {
-      if (DEBUG) console.error(e);
-      reject(e);
-    });
-    response.body
-      .pipe(es.split(), { end: false })
-      .pipe(es.mapSync(async (data) => {
-        if (data) {
-          const event = JSON.parse(data);
-          await processBlockEvents(event);
-        }
-      }), { end: false });
-  });
 };
