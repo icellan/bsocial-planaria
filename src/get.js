@@ -18,30 +18,30 @@ export const getBitbusBlockEvents = async function (query, parser = 'bob') {
 };
 
 export const getBitbusStreamingEvents = (query, height, processCallback) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // Create a timestamped query by applying the "$gt" (greater than) operator with the height
     query.q.find['blk.i'] = { $gt: height };
     fetch('https://bob.bitbus.network/block', {
       method: 'post',
       headers: {
         'Content-type': 'application/json; charset=utf-8',
-        'token': TOKEN,
+        token: TOKEN,
       },
       body: JSON.stringify(query),
     })
-      .then(async function(res) {
+      .then(async (res) => {
         // The promise is resolved when the stream ends.
-        res.body.on('end', function() {
+        res.body.on('end', () => {
           resolve();
         })
           // Split NDJSON into an array stream
           .pipe(es.split())
           // Apply the logic for each line
-          .pipe(es.mapSync(async function(t) {
+          .pipe(es.mapSync(async (t) => {
             // process one by one
             res.body.pause();
             if (t) {
-              let j = JSON.parse(t);
+              const j = JSON.parse(t);
               await processCallback(j);
             }
             res.body.resume();

@@ -19,8 +19,8 @@ export const getBitsocketQuery = function (lastBlockIndexed = false, queryFind =
   queryFind = queryFind || {
     $and: [
       {
-        'out.tape.cell.s': MAP_BITCOM_ADDRESS
-      },{
+        'out.tape.cell.s': MAP_BITCOM_ADDRESS,
+      }, {
         'out.tape.cell.s': {
           $in: ['post', 'like', 'follow', 'unfollow', 'attachment', 'tip', 'payment', 'comment'],
         },
@@ -80,9 +80,10 @@ export const getBAPIdByAddress = async function (address, block, timestamp) {
       if (!bapDB) {
         bapDB = await getDB(bapApiUrl);
       }
-      const bap = await bapDB.collection('id').findOne({
-        'addresses.address': address,
-      });
+      const bap = await bapDB.collection('id')
+        .findOne({
+          'addresses.address': address,
+        });
       if (bap) {
         // TODO check whether it is valid at block / timestamp
         return {
@@ -133,7 +134,7 @@ export const processBSocialTransaction = async function (transaction) {
 
   // Twetch does not follow BSocial protocol 100%
   const bSocialReply = query.MAP[0]?.context === 'tx' && query.MAP[0]?.tx;
-  const twetchPost = query.MAP[0]?.app === 'twetch'
+  const twetchPost = query.MAP[0]?.app === 'twetch';
   const twetchReply = twetchPost && query.MAP[0]?.reply && query.MAP[0]?.reply !== 'null';
   if (twetchReply && !bSocialReply) {
     query.MAP[0].context = 'tx';
@@ -147,20 +148,22 @@ export const processBSocialTransaction = async function (transaction) {
         if (query.B[i]['content-type'].match(/ecies$/)) {
           // store the encrypted stuff as hex - binary does not survive storing to Mongo
           // the bmap parser does not understand this yet, maybe it should be added there
-          query.B[i].content = Buffer.from(query.B[i].content, 'binary').toString('hex');
+          query.B[i].content = Buffer.from(query.B[i].content, 'binary')
+            .toString('hex');
         }
       } catch (e) {
         console.error(e);
       }
     }
 
-    const twetchUrlRegex = new RegExp("https://twetch.app/t/([0-9a-zA-Z]+)", "i");
+    const twetchUrlRegex = new RegExp('https://twetch.app/t/([0-9a-zA-Z]+)', 'i');
     const twetchRepost = twetchPost && query.B[0]?.content?.match(twetchUrlRegex);
     if (twetchRepost && twetchRepost[1]) {
-      query.B[0].content = query.B[0].content.replace(twetchUrlRegex, "");
+      const twetchTx = twetchRepost[1];
+      query.B[0].content = query.B[0].content.replace(twetchUrlRegex, '');
       query.MAP[0].type = 'repost';
       query.MAP[0].context = 'tx';
-      query.MAP[0].tx = twetchRepost[1];
+      query.MAP[0].tx = twetchTx;
     }
   }
 
@@ -237,7 +240,7 @@ export const parseBSocialTransaction = async function (op) {
   }
 };
 
-export const isBSocialOp = function(op) {
+export const isBSocialOp = function (op) {
   if (op.MAP && op.MAP.length > 0) {
     return !!op.MAP.find((map) => {
       return map.cmd === 'SET'
@@ -249,7 +252,7 @@ export const isBSocialOp = function(op) {
           'unfollow',
           'attachment',
           'tip',
-          'payment'
+          'payment',
         ].includes(map.type);
     });
   }
@@ -296,7 +299,7 @@ export const indexBSocialTransactions = async function (queryFind) {
   blockIndex = lastBlockIndexed;
   const query = getBitsocketQuery(lastBlockIndexed, queryFind);
 
-  await getBitbusStreamingEvents(query, lastBlockIndexed, async function(event) {
+  await getBitbusStreamingEvents(query, lastBlockIndexed, async (event) => {
     await processBlockEvents(event);
   });
 
