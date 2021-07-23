@@ -75,7 +75,7 @@ export const addErrorTransaction = async function (op) {
 let bapDB;
 export const getBAPIdByAddress = async function (address, block, timestamp) {
   if (bapApiUrl) {
-    if (bapApiUrl.match('mongodb://')) {
+    if (bapApiUrl.match(/^mongodb(\+srv)?:\/\//)) {
       // This uses the local mongodb, which should be up2date with a bap-planaria
       if (!bapDB) {
         bapDB = await getDB(bapApiUrl);
