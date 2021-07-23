@@ -189,7 +189,7 @@ export const processBSocialTransaction = async function (transaction) {
     // insert
     await BSOCIAL.insert(query)
       .catch((e) => {
-        console.error(e);
+        console.error('Failed inserting bsocial tx ', query._id, e.reason || e.message);
       });
   }
 };
