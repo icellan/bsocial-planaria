@@ -144,6 +144,7 @@ export const processBSocialTransaction = async function (transaction) {
   // check for binary / encrypted B data
   if (query.B) {
     for (let i = 0; i < query.B.length; i++) {
+      query.B[i].length = query.B[i].content.length;
       try {
         if (query.B[i]['content-type'].match(/ecies$/)) {
           // store the encrypted stuff as hex - binary does not survive storing to Mongo

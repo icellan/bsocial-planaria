@@ -7,6 +7,10 @@ const BObject = new SimpleSchema({
     type: String,
     optional: true,
   },
+  length: {
+    type: Number,
+    optional: true,
+  },
   url: {
     type: String,
     optional: true,

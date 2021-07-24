@@ -63,6 +63,7 @@ describe('parseBSocialTransaction', () => {
 const testDBInsert = function (bSocial) {
   expect(bSocial._id).toEqual('7c05aea3cd9474641a3f89f15b730fa1290d9dedcfc08713b80abb3b885e796b');
   expect(bSocial.B[0].content).toEqual('Hello World!'); // trimmed after db insert !
+  expect(bSocial.B[0].length).toEqual(14);
   expect(bSocial.B[0]['content-type']).toEqual('text/markdown');
   expect(bSocial.B[0].encoding).toEqual('UTF-8');
   expect(bSocial.AIP[0].address).toEqual('1PXpeXKc7TXrofPm5paDWziLjvcCDPvjnY');
@@ -226,6 +227,7 @@ describe('Twetch transaction', () => {
     const bSocial = await BSOCIAL.findOne({_id: 'dd4ac9404956b0aa5d9ed70f9d6e8c6868d05b40704e24e97daa649a0c84d6e6'});
     // normal content should not have been touched
     expect(bSocial.B[0].content).toEqual(undefined);
+    expect(bSocial.B[0].length).toEqual(85);
     expect(bSocial.MAP[0].type).toEqual('repost');
     expect(bSocial.MAP[0].context).toEqual('tx');
     expect(bSocial.MAP[0].tx).toEqual('16b70974356dd2c191312cc9e75df12b19a3c216ec0650dde6adaafcaa95fc70');
@@ -236,6 +238,7 @@ describe('Twetch transaction', () => {
     const bSocial = await BSOCIAL.findOne({_id: '0000324ded90f2459d83e454399f1136655378a3d1228c3c24f217069b1099c3'});
     // normal content should not have been touched
     expect(bSocial.B[0].content).toEqual("Apparently you need more than one handle to use that feature.");
+    expect(bSocial.B[0].length).toEqual(61);
     expect(bSocial.MAP[0].type).toEqual('post');
     expect(bSocial.MAP[0].context).toEqual('tx');
     expect(bSocial.MAP[0].tx).toEqual('ca8b5ead89b42f744b4c43e4dcdb871e731a58c534abe0f7c00a1274ca35cf8d');
