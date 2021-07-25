@@ -1,7 +1,8 @@
 import url from 'url';
 import config from '../config.json';
 
-export const DEBUG = !!(process.env.DEBUG || config.DEBUG || false);
+export const DEBUG = !!(process.env.BSOCIAL_DEBUG || config.DEBUG || false);
+export const VERBOSE = !!(process.env.BSOCIAL_VERBOSE || config.VERBOSE || false);
 export const B_BITCOM_ADDRESS = '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut';
 export const MAP_BITCOM_ADDRESS = '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5';
 export const AIP_BITCOM_ADDRESS = '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva';
@@ -13,6 +14,11 @@ if (!TOKEN) {
   console.error('No Planaria token defined in config.json (https://token.planaria.network/)');
   process.exit(-1);
 }
+export const BITFS_STORE = !!(process.env.BSOCIAL_BITFS_STORE || config.BITFS_STORE || false);
+export const BITFS_MAX_CONTENT_LENGTH = process.env.BSOCIAL_BITFS_MAX_LENGTH
+  || config.BITFS_MAX_LENGTH
+  || (10 * 1024 * 1024);
+
 export const mongoUrl = process.env.BSOCIAL_MONGO_URL || process.env.MONGO_URL || config.mongoUrl;
 if (!mongoUrl) {
   console.error('No MongoDB connection defined in ENV or config.json');

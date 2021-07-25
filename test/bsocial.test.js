@@ -17,6 +17,8 @@ import ops from './data/ops.json';
 import bpp from './data/bpp.json';
 import bsocial from './data/bsocial.json';
 import twetch from './data/twetch.json';
+import bitfs from './data/bitfs.json';
+import { BSOCIAL_BITFS } from '../src/schemas/bsocial-bitfs';
 
 describe('getBitsocketQuery', () => {
   test('lastBlockIndexed', () => {
@@ -73,25 +75,27 @@ const testDBInsert = function (bSocial) {
   expect(bSocial.MAP[0].type).toEqual('post');
 };
 
+const bapReponse = {
+  then() {
+    return {
+      json() {
+        return {
+          status: 'OK',
+          result: {
+            status: 'ERROR',
+            message: 'Could not find identity',
+            errorCode: 404,
+          },
+        }
+      }
+    };
+  }
+};
+
 describe('database functions', () => {
   beforeEach(async () => {
     fetch.mockResponse(req => {
-      return {
-        then() {
-          return {
-            json() {
-              return {
-                status: 'OK',
-                result: {
-                  status: 'ERROR',
-                  message: 'Could not find identity',
-                  errorCode: 404,
-                },
-              }
-            }
-          };
-        }
-      }
+      return bapReponse;
     });
     await BSOCIAL.deleteMany({});
     await Errors.deleteMany({});
@@ -242,5 +246,52 @@ describe('Twetch transaction', () => {
     expect(bSocial.MAP[0].type).toEqual('post');
     expect(bSocial.MAP[0].context).toEqual('tx');
     expect(bSocial.MAP[0].tx).toEqual('ca8b5ead89b42f744b4c43e4dcdb871e731a58c534abe0f7c00a1274ca35cf8d');
+  });
+});
+
+describe('bitfs data', () => {
+  beforeEach(async () => {
+    await BSOCIAL.deleteMany({});
+    await BSOCIAL_BITFS.deleteMany({});
+    await Errors.deleteMany({});
+
+    fetch.mockResponse(req => {
+      if (req.url.match(/identity/)) {
+        return bapReponse;
+      } else {
+        return {
+          then() {
+            return {
+              text() {
+                return "test text";
+              }
+            };
+          }
+        }
+      }
+    });
+  });
+
+  test('bitfs text', async () => {
+    const tx = 'cdaaf016855b7920399277769add32eacfcd92d8e257955fef58397bb907da21';
+    const url = `bitfs://${tx}.out.0.3`;
+
+    const parsed = await parseBSocialTransaction(bitfs[0]);
+    parsed.block = 697286;
+    expect(parsed.B[0].content).toEqual(url);
+
+    await processBSocialTransaction(parsed);
+    const bSocial = await BSOCIAL.findOne({_id: tx});
+    expect(bSocial.txId).toEqual(undefined);
+    expect(bSocial.block).toEqual(697286);
+    expect(bSocial.B[0].content).toEqual(url);
+    expect(bSocial.B[0].length).toEqual(9);
+    expect(bSocial.AIP[0].verified).toEqual(true);
+
+    const bitfsData = await BSOCIAL_BITFS.findOne({_id: url});
+    expect(bitfsData.content).toEqual('test text');
+    expect(bitfsData['content-type']).toEqual('text/markdown');
+    expect(bitfsData.length).toEqual(9);
+    expect(bitfsData.tx).toEqual(tx);
   });
 });

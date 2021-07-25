@@ -80,6 +80,10 @@ environment
 ```shell
 export BSOCIAL_PLANARIA_TOKEN="ey..."
 export BSOCIAL_MONGO_URL="mongo://..."
+export BSOCIAL_DEBUG=""
+export BSOCIAL_VERBOSE=1
+export BSOCIAL_BITFS_STORE=1
+export BSOCIAL_BITFS_MAX_LENGTH=10000
 ```
 
 ## run
@@ -123,7 +127,7 @@ export BSOCIAL_MONGO_URL = 'mongodb://localhost:27017/bsocial-planaria';
 Index all mined bSocial transactions:
 
 ```javascript
-import { indexBSocialTransactions } from 'bsocial-planaria/src';
+import { indexBSocialTransactions } from 'bsocial-planaria/dist';
 
 (async function() {
   await indexBSocialTransactions();
@@ -133,7 +137,7 @@ import { indexBSocialTransactions } from 'bsocial-planaria/src';
 or, index all mined transactions + listen to the mempool:
 
 ```javascript
-import { watchBSocialTransactions } from 'bsocial-planaria/src/watch';
+import { watchBSocialTransactions } from 'bsocial-planaria/dist/watch';
 
 (async function() {
   await watchBSocialTransactions();
@@ -143,7 +147,7 @@ import { watchBSocialTransactions } from 'bsocial-planaria/src/watch';
 You can also pass a custom query to the bSocial scripts, overriding the default query that searches for transactions.
 
 ```javascript
-import { watchBSocialTransactions } from 'bsocial-planaria/src/watch';
+import { watchBSocialTransactions } from 'bsocial-planaria/dist/watch';
 
 (async function() {
   // this will only watch for new ID transactions
@@ -152,6 +156,30 @@ import { watchBSocialTransactions } from 'bsocial-planaria/src/watch';
     'out.s3': 'SET',
     'out.s4': 'app'
   });
+})();
+```
+
+There are also hooks available on all the BSocial collections, which you can use to do your own
+processing when a transaction comes in.
+
+```javascript
+import { watchBSocialTransactions } from 'bsocial-planaria/dist/watch';
+import { BSOCIAL } from 'bsocial-planaria/dist/schemas/bsocial';
+import { LIKES } from 'bsocial-planaria/dist/schemas/likes';
+
+// BSocial contains the raw posts in bmap format
+BSOCIAL.after('insert', async (doc) => {
+  // do something with the doc after insert
+});
+
+// The LIKES collection contains the like referenced to the tx and idKey
+LIKES.before('insert', async(doc) => {
+  // do something with the doc before insert
+  // the modified doc is what will be inserted
+});
+
+(async function() {
+  await watchBSocialTransactions();
 })();
 ```
 

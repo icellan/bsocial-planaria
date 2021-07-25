@@ -135,6 +135,19 @@ export class Collection {
   }
 
   /**
+   * Upsert a document
+   *
+   * @param selector
+   * @param modifier
+   * @param options
+   * @returns {Promise<*>}
+   */
+  async upsert(selector, modifier, options = {}) {
+    options.upsert = true;
+    return this.updateMany(selector, modifier, options);
+  }
+
+  /**
    * Insert a single document into mongodb
    *
    * @param doc

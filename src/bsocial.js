@@ -3,8 +3,11 @@ import 'node-fetch';
 import { bmapQuerySchemaHandler } from 'bmapjs/dist/utils';
 import {
   DEBUG,
+  VERBOSE,
   MAP_BITCOM_ADDRESS,
   bapApiUrl,
+  BITFS_STORE,
+  BITFS_MAX_CONTENT_LENGTH,
 } from './config';
 import { BSOCIAL } from './schemas/bsocial';
 import { Errors } from './schemas/errors';
@@ -12,6 +15,7 @@ import { getBitbusStreamingEvents } from './get';
 import { getStatusValue, updateStatusValue } from './status';
 import { cleanDocumentKeys } from './lib/utils';
 import { getDB } from './lib/db';
+import { BSOCIAL_BITFS } from './schemas/bsocial-bitfs';
 
 export const FIRST_BSOCIAL_BLOCK = 671145;
 
@@ -114,6 +118,13 @@ export const getBAPIdByAddress = async function (address, block, timestamp) {
   return false;
 };
 
+export const bitfsUrl = 'https://x.bitfs.network/';
+export const getBitfsContent = async function (url) {
+  const getUrl = url.replace('bitfs://', bitfsUrl);
+  const response = await fetch(getUrl);
+  return response.text();
+};
+
 export const processBSocialTransaction = async function (transaction) {
   if (!transaction) return;
 
@@ -144,9 +155,37 @@ export const processBSocialTransaction = async function (transaction) {
   // check for binary / encrypted B data
   if (query.B) {
     for (let i = 0; i < query.B.length; i++) {
-      query.B[i].length = query.B[i].content.length;
+      if (query.B[i].content.match(/^bitfs:\/\/[0-9a-z\.]+$/)) {
+        // store the bitfs content in the database, but only text
+        if (BITFS_STORE && query.B[i]['content-type']?.match(/^text/)) {
+          try {
+            const url = query.B[i].content;
+            const bitfsContent = await getBitfsContent(url).catch((e) => { console.error(e); });
+            if (bitfsContent && bitfsContent.length <= BITFS_MAX_CONTENT_LENGTH) {
+              // no need to wait ...
+              await BSOCIAL_BITFS.upsert({
+                _id: url,
+              }, {
+                $set: {
+                  _id: url,
+                  content: bitfsContent,
+                  'content-type': query.B[i]['content-type'],
+                  length: bitfsContent.length,
+                  tx: query._id,
+                },
+              });
+              query.B[i].length = bitfsContent.length;
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      } else {
+        query.B[i].length = query.B[i].content.length;
+      }
+
       try {
-        if (query.B[i]['content-type'].match(/ecies$/)) {
+        if (query.B[i]['content-type']?.match(/ecies$/)) {
           // store the encrypted stuff as hex - binary does not survive storing to Mongo
           // the bmap parser does not understand this yet, maybe it should be added there
           query.B[i].content = Buffer.from(query.B[i].content, 'binary')
@@ -220,6 +259,7 @@ export const parseBSocialTransaction = async function (op) {
 
     const bSocialOp = cleanDocumentKeys(await bmap.transformTx(op));
     bSocialOp.txId = bSocialOp.tx.h;
+    bSocialOp._id = bSocialOp.txId;
 
     delete bSocialOp.in;
     delete bSocialOp.out;
@@ -271,7 +311,7 @@ export const processBlockEvents = async function (op) {
     /* eslint-disable no-await-in-loop */
     const bSocialOp = await parseBSocialTransaction(op);
     if (isBSocialOp(bSocialOp)) {
-      console.log('got bSocial transaction', txId, block || 'mempool');
+      if (VERBOSE) console.log('got bSocial transaction', txId, block || 'mempool');
 
       bSocialOp._id = txId;
       bSocialOp.block = block;
@@ -280,7 +320,7 @@ export const processBlockEvents = async function (op) {
       /* eslint-disable no-await-in-loop */
       await processBSocialTransaction(bSocialOp);
       if (bSocialOp.block && bSocialOp.block !== blockIndex) {
-        console.log('UPDATE BLOCK', bSocialOp.block, typeof bSocialOp.block);
+        if (VERBOSE) console.log('UPDATE BLOCK', bSocialOp.block, typeof bSocialOp.block);
         await updateLastBlock(blockIndex);
         blockIndex = bSocialOp.block;
       }
