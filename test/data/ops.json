@@ -553,6 +553,34 @@
                 "b": "ZmEyN2Y5MTU4N2VlNDhmMTBlZTFjODg1OWM2ZGFjY2RkOTBlMTFkNTlkMmZlNGQ5OTQ3YWU3NjIwYmUyNzU0ZA==",
                 "i": 9,
                 "ii": 11
+              },
+              {
+                "s": "currency",
+                "h": "746970",
+                "b": "dGlw",
+                "i": 10,
+                "ii": 12
+              },
+              {
+                "s": "USD",
+                "h": "746970",
+                "b": "dGlw",
+                "i": 11,
+                "ii": 13
+              },
+              {
+                "s": "amount",
+                "h": "746970",
+                "b": "dGlw",
+                "i": 12,
+                "ii": 14
+              },
+              {
+                "s": "0.1",
+                "h": "746970",
+                "b": "dGlw",
+                "i": 13,
+                "ii": 15
               }
             ],
             "i": 1

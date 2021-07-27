@@ -37,6 +37,8 @@ const updateActionStats = async function (
       $inc: {
         [incField]: 1,
       },
+    }).catch((e) => {
+      console.error('Failed updating BSocial updateActionStats', incField, e.reason || e.message);
     });
   }
 };
@@ -61,7 +63,10 @@ const bSocialAfterInsertComment = async function (txId, map, idKey) {
 
 const bSocialAfterInsertTip = async function (txId, map, idKey) {
   if (map.type === 'tip' && map.context === 'tx' && map.tx) {
-    await updateActionStats(txId, map, idKey, TIPS, 'tips');
+    await updateActionStats(txId, map, idKey, TIPS, 'tips', {
+      c: map.currency || '',
+      a: Number(map.amount) || 0,
+    });
   }
 };
 

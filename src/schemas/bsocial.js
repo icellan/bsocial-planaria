@@ -151,11 +151,13 @@ BSOCIAL.after('insert', async (doc) => {
   // update stats on context tx
   await bSocialAfterInsert(doc);
 
-  await BSOCIAL.update({
+  await BSOCIAL.updateOne({
     _id: doc._id,
   }, {
     $set: {
       processed: true,
     },
+  }).catch((e) => {
+    console.error('Failed updating BSocial processed', e.reason || e.message);
   });
 });

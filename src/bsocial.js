@@ -223,13 +223,13 @@ export const processBSocialTransaction = async function (transaction) {
       $set: query,
     })
       .catch((e) => {
-        console.error(e);
+        console.error('Failed updating bSocial tx', bSocialId, e.reason || e.message);
       });
   } else {
     // insert
     await BSOCIAL.insert(query)
       .catch((e) => {
-        console.error('Failed inserting bsocial tx ', query._id, e.reason || e.message);
+        console.error('Failed inserting bSocial tx ', query._id, e.reason || e.message);
       });
   }
 };

@@ -79,7 +79,8 @@ export class Collection {
     const cleanModifier = this._getCleanModifier(modifier);
 
     if (this._hasHook('updateOne')) {
-      const doc = await this.findOne(selector).catch((e) => { console.error(e); });
+      const doc = await this.findOne(selector)
+        .catch((e) => { console.error(e); });
 
       await this._runBeforeHook('updateOne', doc, modifier, options);
 
@@ -97,7 +98,8 @@ export class Collection {
       return result;
     }
 
-    return this.db.collection(this.collectionName).updateOne(selector, cleanModifier, options);
+    return this.db.collection(this.collectionName)
+      .updateOne(selector, cleanModifier, options);
   }
 
   /**
@@ -111,13 +113,17 @@ export class Collection {
   async updateMany(selector, modifier, options = {}) {
     if (!this.db) this.db = await getDB();
 
-    await this._runBeforeHook('updateMany', selector, modifier, options);
+    if (options?.runHooks !== false) {
+      await this._runBeforeHook('updateMany', selector, modifier, options);
+    }
 
     const cleanModifier = this._getCleanModifier(modifier);
     const result = await this.db.collection(this.collectionName)
       .updateMany(selector, cleanModifier, options);
 
-    await this._runAfterHook('updateMany', selector, modifier, options);
+    if (options?.runHooks !== false) {
+      await this._runAfterHook('updateMany', selector, modifier, options);
+    }
 
     return result;
   }
@@ -131,7 +137,20 @@ export class Collection {
    * @returns {Promise<*>}
    */
   async update(selector, modifier, options = {}) {
-    return this.updateMany(selector, modifier, options);
+    await this._runBeforeHook('update', selector, modifier, options);
+
+    const result = await this.updateMany(
+      selector,
+      modifier,
+      {
+        ...options,
+        runHooks: false,
+      },
+    );
+
+    await this._runAfterHook('update', selector, modifier, options);
+
+    return result;
   }
 
   /**
@@ -144,7 +163,21 @@ export class Collection {
    */
   async upsert(selector, modifier, options = {}) {
     options.upsert = true;
-    return this.updateMany(selector, modifier, options);
+
+    await this._runBeforeHook('upsert', selector, modifier, options);
+
+    const result = await this.updateMany(
+      selector,
+      modifier,
+      {
+        ...options,
+        runHooks: false,
+      },
+    );
+
+    await this._runAfterHook('upsert', selector, modifier, options);
+
+    return result;
   }
 
   /**

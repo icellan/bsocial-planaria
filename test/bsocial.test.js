@@ -19,6 +19,8 @@ import bsocial from './data/bsocial.json';
 import twetch from './data/twetch.json';
 import bitfs from './data/bitfs.json';
 import { BSOCIAL_BITFS } from '../src/schemas/bsocial-bitfs';
+import { TIPS } from '../dist/schemas/tips';
+import { bSocialAfterInsert } from '../dist/schemas/hooks/bsocial-after-insert';
 
 describe('getBitsocketQuery', () => {
   test('lastBlockIndexed', () => {
@@ -51,6 +53,8 @@ describe('parseBSocialTransaction', () => {
     expect(typeof parsed.MAP[0]).toBe('object');
     expect(parsed.MAP[0].app).toBe('_test');
     expect(parsed.MAP[0].type).toBe('tip');
+    expect(parsed.MAP[0].currency).toBe('USD');
+    expect(parsed.MAP[0].amount).toBe('0.1');
     expect(parsed.MAP[0].context).toBe('tx');
     expect(parsed.MAP[0].tx).toBe('fa27f91587ee48f10ee1c8859c6daccdd90e11d59d2fe4d9947ae7620be2754d');
   });
@@ -130,9 +134,12 @@ describe('database functions', () => {
 
   test('processBlockEvents tip', async () => {
     await processBlockEvents(ops[2]);
-    const bSocial = await BSOCIAL.findOne({_id: '881b955dad644a8923db46a0efad783906365fd6751d56390839abac5383f122'});
+    const txId = '881b955dad644a8923db46a0efad783906365fd6751d56390839abac5383f122';
+    const bSocial = await BSOCIAL.findOne({_id: txId});
     expect(bSocial.MAP.length).toEqual(1);
     expect(bSocial.MAP[0].type).toEqual('tip');
+    expect(bSocial.MAP[0].currency).toEqual('USD');
+    expect(bSocial.MAP[0].amount).toEqual('0.1');
     expect(bSocial.timestamp).toEqual(1612303485);
     expect(bSocial.processed).toEqual(true);
   });

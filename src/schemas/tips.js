@@ -14,4 +14,10 @@ export const TIPS = new Collection('bsocial-tips', new SimpleSchema({
   t: {
     type: SimpleSchema.Integer,
   },
+  c: {
+    type: String,
+  },
+  a: {
+    type: Number,
+  },
 }));

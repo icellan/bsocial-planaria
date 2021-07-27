@@ -125,6 +125,8 @@ describe('bSocialAfterInsert tip', () => {
   test('tip', async () => {
     const useDoc = {...doc};
     useDoc.MAP[0].type = 'tip';
+    useDoc.MAP[0].currency = 'USD';
+    useDoc.MAP[0].amount = '0.1';
     await bSocialAfterInsert(useDoc);
     const tip = await TIPS.findOne();
     expect(typeof tip).toBe('object');
@@ -132,6 +134,8 @@ describe('bSocialAfterInsert tip', () => {
     expect(tip.txId).toBe(txId);
     expect(tip.idKey).toBe(idKey);
     expect(tip.tx).toBe(tx);
+    expect(tip.c).toBe('USD');
+    expect(tip.a).toBe(0.1);
   });
 });
 
