@@ -19,8 +19,6 @@ import bsocial from './data/bsocial.json';
 import twetch from './data/twetch.json';
 import bitfs from './data/bitfs.json';
 import { BSOCIAL_BITFS } from '../src/schemas/bsocial-bitfs';
-import { TIPS } from '../dist/schemas/tips';
-import { bSocialAfterInsert } from '../dist/schemas/hooks/bsocial-after-insert';
 
 describe('getBitsocketQuery', () => {
   test('lastBlockIndexed', () => {
