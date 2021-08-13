@@ -264,8 +264,15 @@ export class Collection {
   async _runBeforeHook(hook, selector, modifier, options) {
     if (this._hasBeforeHook(hook)) {
       for (let i = 0; i < this._before[hook].length; i++) {
-        const callback = this._before[hook][i];
-        await callback.call(this, selector, modifier, options);
+        try {
+          const callback = this._before[hook][i];
+          await callback.call(this, selector, modifier, options)
+            .catch((e) => {
+              console.error(e);
+            });
+        } catch (e) {
+          console.error(e);
+        }
       }
     }
   }
@@ -273,8 +280,15 @@ export class Collection {
   async _runAfterHook(hook, selector, modifier, options) {
     if (this._hasAfterHook(hook)) {
       for (let i = 0; i < this._after[hook].length; i++) {
-        const callback = this._after[hook][i];
-        await callback.call(this, selector, modifier, options);
+        try {
+          const callback = this._after[hook][i];
+          await callback.call(this, selector, modifier, options)
+            .catch((e) => {
+              console.error(e);
+            });
+        } catch (e) {
+          console.error(e);
+        }
       }
     }
   }

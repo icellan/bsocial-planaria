@@ -19,14 +19,29 @@ import { BSOCIAL_BITFS } from './schemas/bsocial-bitfs';
 
 export const FIRST_BSOCIAL_BLOCK = 671145;
 
-export const getBitsocketQuery = function (lastBlockIndexed = false, queryFind = false) {
+export const BSOCIAL_VALID_ACTIONS = [
+  'post',
+  'repost',
+  'like',
+  'follow',
+  'unfollow',
+  'attachment',
+  'tip',
+  'payment',
+  'comment',
+];
+
+export const getBitsocketQuery = function (
+  lastBlockIndexed = false,
+  queryFind = false,
+) {
   queryFind = queryFind || {
     $and: [
       {
         'out.tape.cell.s': MAP_BITCOM_ADDRESS,
       }, {
         'out.tape.cell.s': {
-          $in: ['post', 'like', 'follow', 'unfollow', 'attachment', 'tip', 'payment', 'comment'],
+          $in: BSOCIAL_VALID_ACTIONS,
         },
       },
     ],
@@ -286,15 +301,7 @@ export const isBSocialOp = function (op) {
     return !!op.MAP.find((map) => {
       return map.cmd === 'SET'
         && map.app
-        && [
-          'post',
-          'like',
-          'follow',
-          'unfollow',
-          'attachment',
-          'tip',
-          'payment',
-        ].includes(map.type);
+        && BSOCIAL_VALID_ACTIONS.includes(map.type);
     });
   }
 
