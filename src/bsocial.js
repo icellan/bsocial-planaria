@@ -137,7 +137,9 @@ export const bitfsUrl = 'https://x.bitfs.network/';
 export const getBitfsContent = async function (url) {
   const getUrl = url.replace('bitfs://', bitfsUrl);
   const response = await fetch(getUrl);
-  return response.text();
+  if (response && response.status === 200) {
+    return response.text();
+  }
 };
 
 export const processBSocialTransaction = async function (transaction) {

@@ -21,7 +21,7 @@ const options = yargs(hideBin(process.argv))
   })
   .option('q', {
     alias: 'query',
-    describe: 'JSON strinigifed query to get from bitbus - use together with -g option',
+    describe: 'JSON stringified query to get from bitbus - use together with -g option',
     type: 'string',
   })
   .option('p', {
