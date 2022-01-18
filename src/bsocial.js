@@ -140,6 +140,7 @@ export const getBitfsContent = async function (url) {
   if (response && response.status === 200) {
     return response.text();
   }
+  return null;
 };
 
 export const processBSocialTransaction = async function (transaction) {

@@ -267,6 +267,7 @@ describe('bitfs data', () => {
         return {
           then() {
             return {
+              status: 200,
               text() {
                 return "test text";
               }
